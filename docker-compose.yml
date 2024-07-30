@@ -1,0 +1,22 @@
+services:
+  ec2:
+    image: ec2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3022:22"
+    volumes:
+      - ec2_data:/home/ubuntu
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1g
+        reservations:
+          cpus: '0.5'
+          memory: 512m
+
+volumes:
+  ec2_data:
+    driver: local
