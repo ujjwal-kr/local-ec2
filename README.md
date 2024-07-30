@@ -1,72 +1,67 @@
-# Local EC2
-Run an ec2 machine locally using docker (sort of).
+# Local EC2 Simulator
+
+Run an EC2-like environment locally using Docker.
 
 ## Guide
 
-This assumes you have docker installed, and in path.
+This guide assumes you have Docker installed and accessible from your command line.
 
 ### Setup
 
-Clone the repo by
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ujjwal-kr/local-ec2
+   ```
 
-```bash
-git clone https://github.com/ujjwal-kr/local-ec2
-```
+2. Navigate to the project directory:
+   ```bash
+   cd local-ec2
+   ```
 
-Change directory to the project
+3. Launch the instance (this may take a few minutes):
+   ```bash
+   docker compose up --build -d
+   ```
 
-```bash
-cd ./local-ec2
-```
+4. SSH into the container:
+   ```bash
+   ssh ubuntu@127.0.0.1 -p 3022
+   ```
+   Default password: `password`
 
-Fire the instance and have patience
-
-```bash
-docker compose up --build -d
-```
-
-Now you can ssh into the container using
-
-```bash
-ssh ubuntu@1227.0.0.1 -p 3022
-```
-
-Default password is: `password`
-
-You can turn off the container using:
-
-```bash
-docker compose down
-```
-
-Pass the -v flag above to delete the volume on host.
+5. To stop the container:
+   ```bash
+   docker compose down
+   ```
+   Add the `-v` flag to delete the associated volume on the host.
 
 ## Usage
 
-You can use this container like a remote server. Clone a repository containing a backend and simply run it inside the server. For ports, you will have to edit the `EXPOSE` command of the Dockerfile and `ports` directive in the docker-compose file, so that the ports are available from outside the server.
+This container simulates a remote server environment. You can clone repositories containing backend code and run them inside this virtual server.
 
-You can add ports provided by your backend by adding them to the Dockerfile:
+To expose ports from your backend:
 
-```Dockerfile
-EXPOSE 22 80 443
-```
+1. Edit the `EXPOSE` command in the Dockerfile:
+   ```Dockerfile
+   EXPOSE 22 80 443 [YOUR_PORT]
+   ```
 
-And also add it to the `ports` of docker compose:
+2. Add the port to the `ports` directive in the docker-compose.yml file:
+   ```yml
+   ports:
+     - "3022:22"
+     - "80:80"
+     - "443:443"
+     - "[HOST_PORT]:[CONTAINER_PORT]"
+   ```
 
-```yml
-    ports:
-      - "3022:22"
-      - "80:80"
-      - "443:443"
-```
+### Configuration
 
-
-### Config
-
-- The default password for ubuntu is `password` but you can change it in the dockerfile.
-- You can change the compute limits in the docker-compose file. Currently it is setup to behave as `t2-micro`.
+- The default password for the `ubuntu` user is `password`. You can change this in the Dockerfile.
+- Adjust compute limits in the docker-compose.yml file. The current setup mimics a `t2.micro` instance.
 
 ## Roadmap
-- Replicate APIs of EC2.
-- Make my own Elastic Kubernetes Service.
-- Render AWS out of business.
+
+1. Implement EC2 API compatibility.
+2. Develop a custom Elastic Kubernetes Service simulator.
+3. Render AWS out of business.
