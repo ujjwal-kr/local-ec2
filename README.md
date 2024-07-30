@@ -33,6 +33,33 @@ ssh ubuntu@1227.0.0.1 -p 3022
 
 Default password is: `password`
 
+You can turn off the container using:
+
+```bash
+docker compose down
+```
+
+Pass the -v flag above to delete the volume on host.
+
+## Usage
+
+You can use this container like a remote server. Clone a repository containing a backend and simply run it inside the server. For ports, you will have to edit the `EXPOSE` command of the Dockerfile and `ports` directive in the docker-compose file, so that the ports are available from outside the server.
+
+You can add ports provided by your backend by adding them to the Dockerfile:
+
+```Dockerfile
+EXPOSE 22 80 443
+```
+
+And also add it to the `ports` of docker compose:
+
+```yml
+    ports:
+      - "3022:22"
+      - "80:80"
+      - "443:443"
+```
+
 
 ### Config
 
