@@ -7,25 +7,25 @@ This assumes you have docker installed, and in path.
 
 ### Setup
 
-- Clone the repo by
+Clone the repo by
 
 ```bash
 git clone https://github.com/ujjwal-kr/local-ec2
 ```
 
-- Change directory to the project
+Change directory to the project
 
 ```bash
 cd ./local-ec2
 ```
 
-- Fire the instance and have patience
+Fire the instance and have patience
 
 ```bash
 docker compose up --build -d
 ```
 
-- Now you can ssh into the container using
+Now you can ssh into the container using
 
 ```bash
 ssh ubuntu@1227.0.0.1 -p 3022
