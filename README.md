@@ -55,6 +55,8 @@ To expose ports from your backend:
      - "[HOST_PORT]:[CONTAINER_PORT]"
    ```
 
+And yes, you can install docker within this instance.
+
 ### Configuration
 
 - The default password for the `ubuntu` user is `password`. You can change this in the Dockerfile.
