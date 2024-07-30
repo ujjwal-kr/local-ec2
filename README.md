@@ -55,7 +55,6 @@ To expose ports from your backend:
      - "[HOST_PORT]:[CONTAINER_PORT]"
    ```
 
-And yes, you can install docker within this instance.
 
 ### Configuration
 
