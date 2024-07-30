@@ -55,6 +55,7 @@ To expose ports from your backend:
      - "[HOST_PORT]:[CONTAINER_PORT]"
    ```
 
+It comes with docker pre-installed btw, please use sudo while invoking it.
 
 ### Configuration
 
