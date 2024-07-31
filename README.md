@@ -1,4 +1,4 @@
-# Local EC2 Simulator
+# Local EC2
 
 Run an EC2-like environment locally using Docker.
 
@@ -55,6 +55,7 @@ To expose ports from your backend:
      - "[HOST_PORT]:[CONTAINER_PORT]"
    ```
 
+It comes with docker pre-installed btw, please use sudo while invoking it.
 
 ### Configuration
 
