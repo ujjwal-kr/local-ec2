@@ -15,7 +15,7 @@ POST {{baseUrl}}/stop_instances
 Content-Type: application/json
 
 {
-    "instance_id": "850c7fb3b7cf"
+    "instance_id": "09f852831cd2"
 }
 
 ### Terminate Instances
@@ -23,5 +23,17 @@ POST {{baseUrl}}/terminate_instances
 Content-Type: application/json
 
 {
-    "instance_id": "850c7fb3b7cf"
+    "instance_id": "09f852831cd2"
+}
+
+### List Volumes
+GET {{baseUrl}}/list_volumes
+Content-Type: application/json
+
+### delete volumes
+DELETE {{baseUrl}}/remove_volume
+Content-Type: application/json
+
+{
+    "name": "meow2_data"
 }
