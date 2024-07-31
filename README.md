@@ -65,6 +65,7 @@ To expose ports from your backend:
 
 This also includes a AWS API if you need it for some reason.
 
+1. Go to api folder by doing `cd ./api`.
 1. Install the requirements by running `pip install -r requirements.txt`.
 2. Run the API server using `python api.py`.
 3. API docs will be released soon.
