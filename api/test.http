@@ -1,0 +1,27 @@
+@baseUrl = http://localhost:6969
+### Run instances
+POST {{baseUrl}}/run_instances
+Content-Type: application/json
+
+{
+    "name": "meow"
+}
+
+### Describe Instances
+GET {{baseUrl}}/describe_instances
+
+### Stop Instances
+POST {{baseUrl}}/stop_instances
+Content-Type: application/json
+
+{
+    "instance_id": "850c7fb3b7cf"
+}
+
+### Terminate Instances
+POST {{baseUrl}}/terminate_instances
+Content-Type: application/json
+
+{
+    "instance_id": "850c7fb3b7cf"
+}
