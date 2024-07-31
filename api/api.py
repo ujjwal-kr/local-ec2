@@ -27,7 +27,6 @@ def create_ec2_container(name):
         security_opt=["seccomp=unconfined"],
         privileged=True,
     )
-    print(container.id)
     return container
 
 @app.route('/run_instances', methods=['POST'])
@@ -61,18 +60,30 @@ def stop_instances():
     instance.stop()
     return jsonify({"status": "stopped"})
 
-def delete_volume(name):
-    volume = client.volumes.get(f'{name}_data')
-    volume.remove(force=True)
-
 @app.route('/terminate_instances', methods=['POST'])
 def terminate_instances():
     data = request.json
     instance_id = data['instance_id']
     instance = client.containers.get(instance_id)
     instance.remove()
-    delete_volume(instance.name)
     return jsonify({"status": "terminated"})
+
+
+@app.route('/list_volumes', methods=["GET"])
+def list_volumes():
+    volumes = client.volumes.list()
+    vols = []
+    for v in volumes:
+        vols.append(v.name)
+    return jsonify(vols)
+
+@app.route('/remove_volume', methods=["DELETE"])
+def remove_volume():
+    data = request.json
+    name = data.get('name')
+    volume = client.volumes.get(name)
+    volume.remove(force=True)
+    return jsonify({"message": "done"})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6969)
