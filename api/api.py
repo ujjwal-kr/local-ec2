@@ -1,16 +1,42 @@
 from flask import Flask, request, jsonify
 import docker
+from docker.types import Mount
+from threading import Thread
 
 app = Flask(__name__)
 client = docker.from_env()
 
-# @app.route('/run_instances', methods=['POST'])
-# def run_instances():
-#     data = request.json
-#     image = data.get('image', 'ubuntu:latest')
-#     command = data.get('command', 'sleep infinity')
-#     instance = client.containers.run(image, command, detach=True)
-#     return jsonify({"instance_id": instance.id})
+def create_ec2_container(name):
+    image, _ = client.images.build(path="../", dockerfile="Dockerfile", tag="ec2-sim")
+    volume = client.volumes.create(f"{name}_data", driver="local")
+
+    container = client.containers.run(
+        image.id,
+        name=name,
+        detach=True,
+        ports={
+            '22/tcp': 3022,
+            '2375/tcp': 2375
+        },
+        mounts=[Mount("/home/ubuntu", volume.name, type="volume")],
+        cpuset_cpus="0",
+        cpu_period=100000,
+        cpu_quota=100000,
+        mem_limit=1024 * 1024 * 1024,  # 1G
+        mem_reservation=512 * 1024 * 1024,  # 512M
+        security_opt=["seccomp=unconfined"],
+        privileged=True,
+    )
+    print(container.id)
+    return container
+
+@app.route('/run_instances', methods=['POST'])
+def run_instances():
+    data = request.json
+    name = data.get('name', 'myec2')
+    thread = Thread(target=create_ec2_container, args=(name,))
+    thread.start()
+    return jsonify({"message": "Done"})
 
 @app.route('/describe_instances', methods=['GET'])
 def describe_instances():
@@ -35,12 +61,17 @@ def stop_instances():
     instance.stop()
     return jsonify({"status": "stopped"})
 
+def delete_volume(name):
+    volume = client.volumes.get(f'{name}_data')
+    volume.remove(force=True)
+
 @app.route('/terminate_instances', methods=['POST'])
 def terminate_instances():
     data = request.json
     instance_id = data['instance_id']
     instance = client.containers.get(instance_id)
     instance.remove()
+    delete_volume(instance.name)
     return jsonify({"status": "terminated"})
 
 if __name__ == '__main__':
