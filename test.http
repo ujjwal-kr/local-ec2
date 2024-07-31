@@ -1,0 +1,20 @@
+@baseUrl = http://localhost:6969
+
+### Describe Instances
+GET {{baseUrl}}/describe_instances
+
+### Stop Instances
+POST {{baseUrl}}/stop_instances
+Content-Type: application/json
+
+{
+    "instance_id": "REPLACE_WITH_ACTUAL_INSTANCE_ID"
+}
+
+### Terminate Instances
+POST {{baseUrl}}/terminate_instances
+Content-Type: application/json
+
+{
+    "instance_id": "REPLACE_WITH_ACTUAL_INSTANCE_ID"
+}
