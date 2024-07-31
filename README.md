@@ -61,8 +61,18 @@ To expose ports from your backend:
 - The default password for the `ubuntu` user is `password`. You can change this in the Dockerfile.
 - Adjust compute limits in the docker-compose.yml file. The current setup mimics a `t2.micro` instance.
 
+### API (optional)
+
+This also includes a AWS API if you need it for some reason.
+
+1. Install the requirements by running `pip install -r requirements.txt`.
+2. Run the API server using `python api.py`.
+3. API docs will be released soon.
+
 ## Roadmap
 
 1. Implement EC2 API compatibility.
-2. Develop a custom Elastic Kubernetes Service simulator.
+   - Frontend Interface to do all this.
+   - SSH via browser because why not.
+2. Develop a custom Elastic Kubernetes Service.
 3. Render AWS out of business.
