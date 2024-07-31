@@ -14,8 +14,18 @@ client = docker.from_env()
 
 @app.route('/describe_instances', methods=['GET'])
 def describe_instances():
+    response = []
     instances = client.containers.list()
-    return jsonify([{"id": i.id, "status": i.status} for i in instances])
+    for container in instances:
+        ports = list(container.ports.keys())
+        c = {
+            "id": container.short_id,
+            "name": container.name,
+            "status": container.status,
+            "ports": ports
+        }
+        response.append(c)
+    return jsonify(response)
 
 @app.route('/stop_instances', methods=['POST'])
 def stop_instances():
