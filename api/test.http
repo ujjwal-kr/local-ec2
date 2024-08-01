@@ -4,7 +4,8 @@ POST {{baseUrl}}/run_instances
 Content-Type: application/json
 
 {
-    "name": "meow"
+    "name": "meow",
+    "ssh_port": 2044
 }
 
 ### Describe Instances
@@ -15,7 +16,7 @@ POST {{baseUrl}}/stop_instances
 Content-Type: application/json
 
 {
-    "instance_id": "09f852831cd2"
+    "instance_id": "d4db489ae25f"
 }
 
 ### Terminate Instances
@@ -23,7 +24,7 @@ POST {{baseUrl}}/terminate_instances
 Content-Type: application/json
 
 {
-    "instance_id": "09f852831cd2"
+    "instance_id": "d4db489ae25f"
 }
 
 ### List Volumes
@@ -35,5 +36,5 @@ DELETE {{baseUrl}}/remove_volume
 Content-Type: application/json
 
 {
-    "name": "meow2_data"
+    "name": "meow_data"
 }

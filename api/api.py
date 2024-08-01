@@ -6,7 +6,7 @@ from threading import Thread
 app = Flask(__name__)
 client = docker.from_env()
 
-def create_ec2_container(name):
+def create_ec2_container(name, ssh_port):
     image, _ = client.images.build(path="../", dockerfile="Dockerfile", tag="ec2-sim")
     volume = client.volumes.create(f"{name}_data", driver="local")
 
@@ -15,8 +15,7 @@ def create_ec2_container(name):
         name=name,
         detach=True,
         ports={
-            '22/tcp': 3022,
-            '2375/tcp': 2375
+            '22/tcp': ssh_port,
         },
         mounts=[Mount("/home/ubuntu", volume.name, type="volume")],
         cpuset_cpus="0",
@@ -27,13 +26,15 @@ def create_ec2_container(name):
         security_opt=["seccomp=unconfined"],
         privileged=True,
     )
+    print(container.id)
     return container
 
 @app.route('/run_instances', methods=['POST'])
 def run_instances():
     data = request.json
     name = data.get('name', 'myec2')
-    thread = Thread(target=create_ec2_container, args=(name,))
+    port = int(data.get('ssh_port', 22))
+    thread = Thread(target=create_ec2_container, args=(name,port))
     thread.start()
     return jsonify({"message": "Done"})
 
@@ -42,7 +43,7 @@ def describe_instances():
     response = []
     instances = client.containers.list()
     for container in instances:
-        ports = list(container.ports.keys())
+        ports = container.ports
         c = {
             "id": container.short_id,
             "name": container.name,
@@ -67,7 +68,6 @@ def terminate_instances():
     instance = client.containers.get(instance_id)
     instance.remove()
     return jsonify({"status": "terminated"})
-
 
 @app.route('/list_volumes', methods=["GET"])
 def list_volumes():
