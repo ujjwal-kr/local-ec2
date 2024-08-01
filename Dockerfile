@@ -30,7 +30,7 @@ RUN apt-get update && \
 
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN echo "ubuntu:password" | chpasswd
-RUN usermod -aG sudo ubuntu
+RUN usermod -aG sudo ubuntu && usermod -aG docker ubuntu
 
 RUN mkdir /var/run/sshd
 RUN ssh-keygen -A
