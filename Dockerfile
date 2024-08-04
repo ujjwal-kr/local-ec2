@@ -36,6 +36,5 @@ RUN mkdir /var/run/sshd
 RUN ssh-keygen -A
 
 EXPOSE 22
-EXPOSE 2375
 
 CMD ["sh", "-c", "dockerd & service ssh start && tail -f /dev/null"]
