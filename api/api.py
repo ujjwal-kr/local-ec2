@@ -6,7 +6,10 @@ from threading import Thread
 app = Flask(__name__)
 client = docker.from_env()
 
-def create_ec2_container(name, ssh_port, volumes=None):
+def create_ec2_instance(name, ssh_port, volumes=None):
+    for instance in client.containers.list():
+        if instance.name == name:
+            return
     image, _ = client.images.build(path="../", dockerfile="Dockerfile", tag="ec2-sim")
     volume = client.volumes.create(f"{name}_data", driver="local")
     mounts = [Mount("/home/ubuntu", volume.name, type="volume")]
@@ -16,7 +19,7 @@ def create_ec2_container(name, ssh_port, volumes=None):
             source = v.get("source")
             mounts.append(Mount(target=target, source=source, type="volume"))
 
-    container = client.containers.run(
+    instance = client.containers.run(
         image.id,
         name=name,
         detach=True,
@@ -32,15 +35,15 @@ def create_ec2_container(name, ssh_port, volumes=None):
         security_opt=["seccomp=unconfined"],
         privileged=True,
     )
-    print(container.id)
-    return container
+    print(instance.id)
+    return instance
 
 @app.route('/run_instances', methods=['POST'])
 def run_instances():
     data = request.json
     name = data.get('name', 'myec2')
     port = int(data.get('ssh_port', 22))
-    thread = Thread(target=create_ec2_container, args=(name,port))
+    thread = Thread(target=create_ec2_instance, args=(name,port))
     thread.start()
     return jsonify({"message": "Done"})
 
@@ -48,15 +51,15 @@ def run_instances():
 def describe_instances():
     response = []
     instances = client.containers.list()
-    for container in instances:
-        ports = container.ports
-        c = {
-            "id": container.short_id,
-            "name": container.name,
-            "status": container.status,
+    for instance in instances:
+        ports = instance.ports
+        i = {
+            "id": instance.short_id,
+            "name": instance.name,
+            "status": instance.status,
             "ports": ports
         }
-        response.append(c)
+        response.append(i)
     return jsonify(response)
 
 @app.route('/stop_instances', methods=['POST'])
@@ -97,15 +100,15 @@ def attatch_volume():
     source = data.get('source')
     target = data.get('target')
     instances = client.containers.list()
-    for container in instances:
-        if container.name == instance_name:
-            c = client.containers.get(container_id=container.id)
+    for instance in instances:
+        if instance.name == instance_name:
+            c = client.containers.get(container_id=instance.id)
             c.stop()
             c.remove()
             break
     volumes = []
     volumes.append({"source": source, "target": target})
-    create_ec2_container(instance_name, 3022, volumes=volumes)
+    create_ec2_instance(instance_name, 3022, volumes=volumes)
     return jsonify({"message": "Done"})
 
 @app.route('/remove_volume', methods=["DELETE"])
