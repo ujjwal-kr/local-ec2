@@ -65,6 +65,7 @@ def terminate_instances():
     data = request.json
     instance_id = data['instance_id']
     instance = client.containers.get(instance_id)
+    instance.kill()
     instance.remove()
     return jsonify({"status": "terminated"})
 
@@ -93,7 +94,7 @@ def attatch_volume():
     for instance in instances:
         if instance.name == instance_name:
             c = client.containers.get(container_id=instance.id)
-            c.stop()
+            c.kill()
             c.remove()
             break
     volumes = []

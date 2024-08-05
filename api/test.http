@@ -16,7 +16,7 @@ POST {{baseUrl}}/terminate_instances
 Content-Type: application/json
 
 {
-    "instance_id": "d4db489ae25f"
+    "instance_id": "68bb47dd382c"
 }
 
 ### List Volumes
