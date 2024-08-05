@@ -11,14 +11,6 @@ Content-Type: application/json
 ### Describe Instances
 GET {{baseUrl}}/describe_instances
 
-### Stop Instances
-POST {{baseUrl}}/stop_instances
-Content-Type: application/json
-
-{
-    "instance_id": "d4db489ae25f"
-}
-
 ### Terminate Instances
 POST {{baseUrl}}/terminate_instances
 Content-Type: application/json

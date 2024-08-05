@@ -60,14 +60,6 @@ def describe_instances():
         response.append(i)
     return jsonify(response)
 
-@app.route('/stop_instances', methods=['POST'])
-def stop_instances():
-    data = request.json
-    instance_id = data['instance_id']
-    instance = client.containers.get(instance_id)
-    instance.stop()
-    return jsonify({"status": "stopped"})
-
 @app.route('/terminate_instances', methods=['POST'])
 def terminate_instances():
     data = request.json
