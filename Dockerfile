@@ -19,21 +19,21 @@ RUN apt-get update && \
     ca-certificates \
     gnupg-agent \
     software-properties-common \
-    lsb-release \
-    && rm -rf /var/lib/apt/lists/*
+    lsb-release
 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-RUN apt-get update && \
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
+    apt-get update && \
     apt-get install -y docker-ce docker-ce-cli containerd.io
 
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN echo "ubuntu:password" | chpasswd
-RUN usermod -aG sudo ubuntu && usermod -aG docker ubuntu
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    echo "ubuntu:password" | chpasswd && \
+    usermod -aG sudo ubuntu && \
+    usermod -aG docker ubuntu && \
+    mkdir /var/run/sshd && \
+    ssh-keygen -A
 
-RUN mkdir /var/run/sshd
-RUN ssh-keygen -A
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 22
 
