@@ -27,9 +27,7 @@ def create_ec2_instance(name, ssh_port, volumes=None):
             '22/tcp': ssh_port,
         },
         mounts=mounts,
-        cpuset_cpus="0",
-        cpu_period=100000,
-        cpu_quota=100000,
+        nano_cpus=1000000000,
         mem_limit=1024 * 1024 * 1024,  # 1G
         mem_reservation=512 * 1024 * 1024,  # 512M
         security_opt=["seccomp=unconfined"],
