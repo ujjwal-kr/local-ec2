@@ -30,7 +30,7 @@ def create_ec2_instance(name, ssh_port, volumes=None):
         nano_cpus=1000000000,
         mem_limit=1024 * 1024 * 1024,  # 1G
         mem_reservation=512 * 1024 * 1024,  # 512M
-        security_opt=["seccomp=unconfined"],
+        # security_opt=["seccomp=unconfined"],
         privileged=True,
     )
     print(instance.id)
