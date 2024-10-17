@@ -6,7 +6,8 @@ from threading import Thread
 app = Flask(__name__)
 client = docker.from_env()
 
-def create_ec2_instance(name, ssh_port, volumes=None):
+def create_ec2_instance(name, ssh_port, volumes=None, mem=1024, cpus=1):
+    print(name, ssh_port, mem, cpus)
     for instance in client.containers.list():
         if instance.name == name:
             return
@@ -18,38 +19,42 @@ def create_ec2_instance(name, ssh_port, volumes=None):
             target = v.get("target")
             source = v.get("source")
             mounts.append(Mount(target=target, source=source, type="volume"))
-
-    instance = client.containers.run(
-        image.id,
-        name=name,
-        detach=True,
-        ports={
-            '22/tcp': ssh_port,
-        },
-        mounts=mounts,
-        nano_cpus=1000000000,
-        mem_limit=1024 * 1024 * 1024,  # 1G
-        mem_reservation=512 * 1024 * 1024,  # 512M
-        # security_opt=["seccomp=unconfined"],
-        privileged=True,
-    )
-    print(instance.id)
-    return instance
+    try:
+        instance = client.containers.run(
+            image.id,
+            name=name,
+            detach=True,
+            ports={
+                '22/tcp': ssh_port,
+            },
+            mounts=mounts,
+            nano_cpus=int(cpus*1000000000),
+            mem_limit=int(mem * 1024 * 1024),
+            mem_reservation= int(mem * 1024 * 1024 * 0.9),
+            security_opt=["seccomp=unconfined"],
+            privileged=True,
+        )
+        print("ID:", instance.id)
+        return instance
+    except Exception as e:
+        print(e)
 
 @app.route('/run_instances', methods=['POST'])
 def run_instances():
     data = request.json
     name = data.get('name', 'myec2')
     port = int(data.get('ssh_port', 22))
-    thread = Thread(target=create_ec2_instance, args=(name,port))
-    thread.start()
-    return jsonify({"message": "Done"})
+    mem = int(data.get('mem'))
+    cpus = int(data.get('cpus'))
+    instance = create_ec2_instance(name, port, None, mem, cpus)
+    return jsonify({"message": instance.id})
 
 @app.route('/describe_instances', methods=['GET'])
 def describe_instances():
     response = []
     instances = client.containers.list()
     for instance in instances:
+        print(type(instance))
         ports = instance.ports
         i = {
             "id": instance.short_id,
