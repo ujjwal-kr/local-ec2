@@ -1,36 +1,54 @@
-# Local EC2
+# 🚀 Local EC2
 
-Run an EC2-like environment locally using Docker.
+Spin up cloud-style EC2 right on your local setup using Docker. Perfect for test runs, flexin’ infra skills, or building that next big thing.
+
+[![Dashboard Preview](https://github.com/user-attachments/assets/eca758ae-cc12-4356-9472-87fe897ebd2a)](https://github.com/user-attachments/assets/eca758ae-cc12-4356-9472-87fe897ebd2a)
+
+---
 
 ## Motivation
 - This can be used for testing within clusters without the hassle of vms.
 - We also use it personally for training people about devops.
 - Plan to implement dev environments using docker managable via a master node. How cool.
 
-![image](https://github.com/user-attachments/assets/eca758ae-cc12-4356-9472-87fe897ebd2a)
+---
 
-## Guide
+## What You Need
 
-This guide assumes you have Docker installed and accessible from your command line.
+Before you pull up:
 
-### Setup
+- Docker 20.10+ 
+- Python 3.8+ 
+- Node.js 16+ & npm
 
-1. Clone the repository:
+---
+
+## Setup
+
+1. **Clone the repo**
    ```bash
    git clone https://github.com/ujjwal-kr/local-ec2
-   ```
-
-2. Navigate to the project directory:
-   ```bash
    cd local-ec2
    ```
 
-3. Launch Local EC2:
+2. **Start the backend**
    ```bash
-   docker compose up -d
+   python -m venv env
+   source env/bin/activate        # Mac/Linux
+   env\Scripts\activate           # Windows
+
+   pip install -r requirements.txt
+   python api.py                  # Fires up on port 6969
    ```
 
-   Local EC2 will be running on port 3000 i guess.
+3. **Spin the frontend**
+   ```bash
+   cd ui
+   npm install
+   npm run dev                    # Hit it at http://localhost:3000
+   ```
+
+---
 
 ## Roadmap
 
@@ -39,3 +57,7 @@ This guide assumes you have Docker installed and accessible from your command li
    - SSH via browser because why not.
 2. Develop a custom Elastic Kubernetes Service.
 3. Render AWS out of business.
+
+---
+
+**⚠️ Disclaimer:** Not affiliated in any way by AWS.
