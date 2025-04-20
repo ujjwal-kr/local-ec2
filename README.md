@@ -4,6 +4,10 @@ Run an EC2-like environment locally using Docker.
 
 ![image](https://github.com/user-attachments/assets/eca758ae-cc12-4356-9472-87fe897ebd2a)
 
+## Motivation
+- This can be used for testing within clusters without the hassle of vms.
+- We also use it personally for training people about devops.
+- Plan to implement dev environments using docker managable via a master node. How cool.
 
 ## Guide
 
