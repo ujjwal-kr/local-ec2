@@ -2,16 +2,17 @@
 
 Spin up cloud-style EC2 right on your local setup using Docker. Perfect for test runs, flexin’ infra skills, or building that next big thing.
 
-[![Dashboard Preview](https://github.com/user-attachments/assets/eca758ae-cc12-4356-9472-87fe897ebd2a)](https://github.com/user-attachments/assets/eca758ae-cc12-4356-9472-87fe897ebd2a)
-
----
-
 ## Motivation
 - This can be used for testing within clusters without the hassle of vms.
 - We also use it personally for training people about devops.
 - Plan to implement dev environments using docker managable via a master node. How cool.
 
----
+
+[![Dashboard Preview](https://github.com/user-attachments/assets/eca758ae-cc12-4356-9472-87fe897ebd2a)](https://github.com/user-attachments/assets/eca758ae-cc12-4356-9472-87fe897ebd2a)
+
+
+
+
 
 ## What You Need
 
@@ -21,7 +22,7 @@ Before you pull up:
 - Python 3.8+ 
 - Node.js 16+ & npm
 
----
+
 
 ## Setup
 
@@ -48,7 +49,7 @@ Before you pull up:
    npm run dev                    # Hit it at http://localhost:3000
    ```
 
----
+
 
 ## Roadmap
 
@@ -58,6 +59,6 @@ Before you pull up:
 2. Develop a custom Elastic Kubernetes Service.
 3. Render AWS out of business.
 
----
+
 
 **⚠️ Disclaimer:** Not affiliated in any way by AWS.
