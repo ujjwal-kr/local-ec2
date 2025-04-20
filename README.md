@@ -1,6 +1,6 @@
 # 🚀 Local EC2
 
-Spin up cloud-style EC2 right on your local setup using Docker. Perfect for test runs, flexin’ infra skills, or building that next big thing.
+Spin up cloud-style EC2 right on your local setup using Docker. Perfect for test runs or flexing infra skills.
 
 ## Motivation
 - This can be used for testing within clusters without the hassle of vms.
