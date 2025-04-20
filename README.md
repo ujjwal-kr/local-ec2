@@ -26,6 +26,8 @@ This guide assumes you have Docker installed and accessible from your command li
    docker compose up -d
    ```
 
+   Local EC2 will be running on port 3000 i guess.
+
 ## Roadmap
 
 1. Implement EC2 API compatibility.
