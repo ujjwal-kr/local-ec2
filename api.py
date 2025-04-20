@@ -7,11 +7,10 @@ app = Flask(__name__)
 client = docker.from_env()
 
 def create_ec2_instance(name, ssh_port, volumes=None, mem=1024, cpus=1):
-    print(name, ssh_port, mem, cpus)
     for instance in client.containers.list():
         if instance.name == name:
             return
-    image, _ = client.images.build(path="../", dockerfile="Dockerfile", tag="ec2-sim")
+    image, _ = client.images.build(path=".", dockerfile="Dockerfile", tag="ec2-sim")
     volume = client.volumes.create(f"{name}_data", driver="local")
     mounts = [Mount("/home/ubuntu", volume.name, type="volume")]
     if volumes is not None:
@@ -28,13 +27,12 @@ def create_ec2_instance(name, ssh_port, volumes=None, mem=1024, cpus=1):
                 '22/tcp': ssh_port,
             },
             mounts=mounts,
-            nano_cpus=int(cpus*1000000000),
+            nano_cpus=int(cpus*1e9),
             mem_limit=int(mem * 1024 * 1024),
             mem_reservation= int(mem * 1024 * 1024 * 0.9),
             security_opt=["seccomp=unconfined"],
             privileged=True,
         )
-        print("ID:", instance.id)
         return instance
     except Exception as e:
         print(e)
@@ -46,24 +44,70 @@ def run_instances():
     port = int(data.get('ssh_port', 22))
     mem = int(data.get('mem'))
     cpus = int(data.get('cpus'))
-    instance = create_ec2_instance(name, port, None, mem, cpus)
-    return jsonify({"message": instance.id})
+    t = Thread(target=create_ec2_instance, args=(name, port, None, mem, cpus))
+    t.start()
+    return jsonify({"message": "Instence is being created", "name": name, "ssh_port": port, "mem": mem, "cpus": cpus})
 
 @app.route('/describe_instances', methods=['GET'])
 def describe_instances():
     response = []
     instances = client.containers.list()
     for instance in instances:
-        print(type(instance))
         ports = instance.ports
+        ip_addr = instance.attrs['NetworkSettings']['Networks']['bridge']['IPAddress']
         i = {
             "id": instance.short_id,
             "name": instance.name,
             "status": instance.status,
-            "ports": ports
+            "ports": ports,
+            "ip_addr": ip_addr,
         }
         response.append(i)
     return jsonify(response)
+
+@app.route('/forward_port', methods=['POST'])
+def forward_port():
+    data = request.json
+    instance_name = data.get('instance_name')
+    guest = data.get('guest')
+    host = data.get('host')
+
+    try:
+        instance = client.containers.get(instance_name)
+    except docker.errors.NotFound:
+        return jsonify({"error": "Instance not found"}), 404
+
+    current_ports = {}
+    for guest_port, bindings in instance.ports.items():
+        if bindings:
+            current_ports[guest_port] = bindings[0]['HostPort']
+
+    if '/' not in guest:
+        guest += '/tcp'
+    current_ports[guest] = host
+
+    host_config = instance.attrs['HostConfig']
+    cpus = host_config.get('NanoCpus', 1e9) / 1e9 
+    mem = host_config.get('Memory', 1024 * 1024) // (1024 * 1024)
+
+    volumes = []
+    default_volume = f"{instance_name}_data"
+    for mount in instance.attrs['Mounts']:
+        if not (mount['Destination'] == '/home/ubuntu' and mount['Source'] == default_volume):
+            volumes.append({
+                "source": mount['Source'],
+                "target": mount['Destination']
+            })
+    instance.kill()
+    instance.remove()
+    t = Thread(target=create_ec2_instance, args=(instance_name, current_ports, volumes, mem, cpus))
+    t.start()
+
+    return jsonify({
+        "message": "Port forwarding added",
+        "instance": instance_name,
+        "ports": current_ports
+    })
 
 @app.route('/terminate_instances', methods=['POST'])
 def terminate_instances():

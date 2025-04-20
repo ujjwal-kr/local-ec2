@@ -4,7 +4,7 @@ POST {{baseUrl}}/run_instances
 Content-Type: application/json
 
 {
-    "name": "server2",
+    "name": "server1",
     "ssh_port": 6768,
     "mem": 2048,
     "cpus": 2
@@ -31,4 +31,14 @@ Content-Type: application/json
 
 {
     "name": "meow2_data"
+}
+
+### 
+POST {{baseUrl}}/forward_port
+Content-Type: application/json
+
+{
+    "instance_name": "server1",
+    "guest": 80,
+    "host": 8080
 }
