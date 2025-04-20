@@ -2,9 +2,11 @@ from flask import Flask, request, jsonify
 import docker
 from docker.types import Mount
 from threading import Thread
+from flask_cors import CORS
 
 app = Flask(__name__)
 client = docker.from_env()
+CORS(app)
 
 def create_ec2_instance(name, ssh_port, volumes=None, mem=1024, cpus=1):
     for instance in client.containers.list():
