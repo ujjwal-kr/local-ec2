@@ -15,6 +15,8 @@
       {
         devShell = pkgs.mkShell {
           buildInputs = [
+            pkgs.nodejs
+            pkgs.pnpm
             python
             python.pkgs.virtualenv
             python.pkgs.pip
