@@ -1,0 +1,218 @@
+openapi: 3.0.3
+info:
+  title: Local EC2 API
+  description: Simulates EC2 instance operations using Docker containers.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:6969
+
+paths:
+  /run_instances:
+    post:
+      summary: Create a simulated EC2 instance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, ssh_port, mem, cpus]
+              properties:
+                name:
+                  type: string
+                ssh_port:
+                  type: integer
+                mem:
+                  type: integer
+                  description: Memory in MB
+                cpus:
+                  type: number
+                  description: Number of CPUs
+      responses:
+        '200':
+          description: Instance creation started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  name:
+                    type: string
+                  ssh_port:
+                    type: integer
+                  mem:
+                    type: integer
+                  cpus:
+                    type: number
+
+  /describe_instances:
+    get:
+      summary: List running instances
+      responses:
+        '200':
+          description: A list of containers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    status:
+                      type: string
+                    ports:
+                      type: object
+                    ip_addr:
+                      type: string
+
+  /forward_port:
+    post:
+      summary: Add or update a port forward for an instance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instance_name, guest, host]
+              properties:
+                instance_name:
+                  type: string
+                guest:
+                  type: string
+                host:
+                  type: string
+      responses:
+        '200':
+          description: Port forwarding added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  instance:
+                    type: string
+                  ports:
+                    type: object
+
+  /terminate_instances:
+    post:
+      summary: Terminate a running instance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instance_id]
+              properties:
+                instance_id:
+                  type: string
+      responses:
+        '200':
+          description: Instance terminated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+  /list_volumes:
+    get:
+      summary: List all Docker volumes
+      responses:
+        '200':
+          description: A list of volume names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /add_volume:
+    post:
+      summary: Create a new volume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Volume created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+
+  /attatch_volume:
+    post:
+      summary: Attach a volume to an instance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instance_name, source, target]
+              properties:
+                instance_name:
+                  type: string
+                source:
+                  type: string
+                target:
+                  type: string
+      responses:
+        '200':
+          description: Volume attached
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /remove_volume:
+    delete:
+      summary: Remove a Docker volume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Volume removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
